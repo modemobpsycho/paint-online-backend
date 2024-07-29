@@ -14,12 +14,18 @@ datasource db {
 }
 
 model Board {
-  id                Int      @id @default(autoincrement())
-  name              String
-  creator           String   
-  drawings          String[] 
+  id        Int      @id @default(autoincrement())
+  name      String
+  creator   String
 
-  Drawing Drawing[]
+  drawings  Drawing[]
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String
+
+  Drawing Drawing[] @relation("UserDrawings")
 }
 
 model Drawing {
@@ -31,7 +37,7 @@ model Drawing {
   fillColor         String
   posX              Int[]
   posY              Int[]
-  username          String
-
-  board             Board    @relation(fields:[boardId], references: [id])
+  
+  board             Board    @relation(fields: [boardId], references: [id])
+  users             User[]   @relation("UserDrawings")
 }

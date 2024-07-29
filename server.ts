@@ -6,6 +6,7 @@ import { initSocketRoutes } from "./router/socketRoutes"
 import boardRouter from "./router/boardRoutes"
 
 const app = express()
+app.use(express.json())
 const server = http.createServer(app)
 const io = new Server(server, {
     cors: {
