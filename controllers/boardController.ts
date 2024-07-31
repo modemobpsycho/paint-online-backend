@@ -25,15 +25,14 @@ export const addBoard = async (req: Request, res: Response) => {
         const newBoard = await prismaClient.board.create({
             data: {
                 name,
-                creator,
-                drawings: []
+                creator
             }
         })
 
         res.status(201).json(newBoard)
     } catch (error) {
         console.error(error)
-        res.status(500).send("Ошибка при создании нового борда")
+        res.status(500).send("Error creating new board")
     }
 }
 
@@ -58,5 +57,46 @@ export const deleteBoard = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error)
         return res.status(500).send(error)
+    }
+}
+
+export const addDraw = async (req: Request, res: Response) => {
+    const { boardId, draw } = req.body
+    try {
+        const board = await prismaClient.board.update({
+            where: { id: Number(boardId) },
+            data: {}
+        })
+        res.send(board).status(200)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send(error)
+    }
+}
+
+export const addDrawing = async (req: Request, res: Response) => {
+    const data = req.body
+    const { boardId } = req.params
+
+    console.log(data)
+
+    try {
+        const newDrawing = await prismaClient.drawing.create({
+            data: {
+                type: data.type,
+                lineWidth: data.lineWidth,
+                strokeColor: data.strokeColor,
+                fillColor: data.fillColor,
+                posX: data.posX,
+                posY: data.posY,
+                user: { connect: { username: data.username } },
+                board: { connect: { id: Number(boardId) } }
+            }
+        })
+
+        res.status(201).json(newDrawing)
+    } catch (error) {
+        console.error(error)
+        res.status(500).send("Error creating new drawing")
     }
 }

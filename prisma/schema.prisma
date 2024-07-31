@@ -23,21 +23,22 @@ model Board {
 
 model User {
   id       Int      @id @default(autoincrement())
-  username String
+  username String   @unique
 
-  Drawing Drawing[] @relation("UserDrawings")
+  Drawing Drawing[] 
 }
 
 model Drawing {
   id                Int      @id @default(autoincrement())
   boardId           Int 
+  userId            Int
   type              String
   lineWidth         Int
   strokeColor       String
-  fillColor         String
+  fillColor         String?   
   posX              Int[]
   posY              Int[]
   
   board             Board    @relation(fields: [boardId], references: [id])
-  users             User[]   @relation("UserDrawings")
+  user             User   @relation(fields: [userId], references: [id])
 }

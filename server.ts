@@ -4,6 +4,7 @@ import http from "http"
 import { Server } from "socket.io"
 import { initSocketRoutes } from "./router/socketRoutes"
 import boardRouter from "./router/boardRoutes"
+import userRouter from "./router/userRoutes"
 
 const app = express()
 app.use(express.json())
@@ -20,7 +21,7 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
-app.use("/api", boardRouter)
+app.use("/api", [boardRouter, userRouter])
 initSocketRoutes(io)
 
 const PORT = process.env.PORT || 3000
