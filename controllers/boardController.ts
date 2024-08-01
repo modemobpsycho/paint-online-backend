@@ -60,25 +60,9 @@ export const deleteBoard = async (req: Request, res: Response) => {
     }
 }
 
-export const addDraw = async (req: Request, res: Response) => {
-    const { boardId, draw } = req.body
-    try {
-        const board = await prismaClient.board.update({
-            where: { id: Number(boardId) },
-            data: {}
-        })
-        res.send(board).status(200)
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send(error)
-    }
-}
-
 export const addDrawing = async (req: Request, res: Response) => {
     const data = req.body
     const { boardId } = req.params
-
-    console.log(data)
 
     try {
         const newDrawing = await prismaClient.drawing.create({
@@ -98,5 +82,20 @@ export const addDrawing = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error)
         res.status(500).send("Error creating new drawing")
+    }
+}
+
+export const getDrawings = async (req: Request, res: Response) => {
+    const { boardId } = req.params
+
+    console.log(boardId)
+    try {
+        const drawings = await prismaClient.drawing.findMany({
+            where: { boardId: Number(boardId) }
+        })
+        res.send(drawings).status(200)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send(error)
     }
 }

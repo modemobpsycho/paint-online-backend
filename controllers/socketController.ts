@@ -38,6 +38,7 @@ export const handleSocketConnection = (io: Server) => {
 
         socket.on("draw", (data) => {
             const { id: roomId } = data
+            console.log(data)
             io.to(roomId).emit("draw", data)
         })
     })
