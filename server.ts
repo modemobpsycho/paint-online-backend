@@ -2,26 +2,44 @@ import express from "express"
 import cors from "cors"
 import http from "http"
 import { Server } from "socket.io"
-import { initSocketRoutes } from "./router/socketRoutes"
-import boardRouter from "./router/boardRoutes"
-import userRouter from "./router/userRoutes"
+import { initSocketRoutes } from "./router/socketRouter"
+import boardRouter from "./router/boardRouter"
+import userRouter from "./router/userRouter"
 
 const app = express()
-app.use(express.json())
-const server = http.createServer(app)
-const io = new Server(server, {
-    cors: {
-        origin: "http://localhost:5173",
-        methods: ["GET", "POST"]
-    }
-})
 
 const corsOptions = {
-    origin: "http://localhost:5173"
+    origin: ["https://itra-task-6-frontend.vercel.app", "http://localhost:5173"]
 }
 
 app.use(cors(corsOptions))
-app.use("/api", [boardRouter, userRouter])
+app.use(express.json())
+
+app.use("/api", boardRouter)
+app.use("/api", userRouter)
+
+app.use(function (req, res, next) {
+    res.header(
+        "Access-Control-Allow-Origin",
+        "https://itra-task-6-frontend.vercel.app"
+    )
+    res.header("Access-Control-Allow-Headers", "X-Requested-With")
+    res.header("Access-Control-Allow-Headers", "Content-Type")
+    res.header(
+        "Access-Control-Allow-Methods",
+        "PUT, GET, POST, DELETE, OPTIONS"
+    )
+    res.header("Access-Control-Allow-Credentials", "true")
+    next()
+})
+
+const server = http.createServer(app)
+const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+})
+
 initSocketRoutes(io)
 
 const PORT = process.env.PORT || 3000
@@ -29,3 +47,5 @@ const PORT = process.env.PORT || 3000
 server.listen(PORT, () => {
     console.log(`Server is running on localhost:${PORT}`)
 })
+
+export default app

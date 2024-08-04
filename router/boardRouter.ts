@@ -4,6 +4,8 @@ import {
     addBoard,
     getBoard,
     deleteBoard,
+    undoDrawing,
+    redoDrawing,
     addDrawing,
     getDrawings
 } from "../controllers/boardController"
@@ -16,5 +18,7 @@ boardRouter.get("/board/:boardId", getBoard)
 boardRouter.delete("/board/:boardId", deleteBoard)
 boardRouter.post("/board/:boardId/drawing", addDrawing)
 boardRouter.get("/board/:boardId/drawings", getDrawings)
+boardRouter.delete("/board/deletedraw/:boardId/:username", undoDrawing)
+boardRouter.post("/board/postdraw/:boardId/:username", redoDrawing)
 
 export default boardRouter

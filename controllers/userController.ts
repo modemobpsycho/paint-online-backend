@@ -2,15 +2,16 @@ import { Response, Request } from "express"
 import { prismaClient } from "../prisma/database"
 
 export const addUser = async (req: Request, res: Response) => {
-    const { username } = req.body
-
     try {
-        const user = await prismaClient.user.findUnique({ where: { username } })
+        const { username } = req.body
+        const user = await prismaClient.user2.findUnique({
+            where: { username }
+        })
 
         if (user) {
             return res.status(200).send("User already exists")
         }
-        const newUser = await prismaClient.user.create({
+        const newUser = await prismaClient.user2.create({
             data: {
                 username
             }

@@ -28,7 +28,6 @@ export const addBoard = async (req: Request, res: Response) => {
                 creator
             }
         })
-
         res.status(201).json(newBoard)
     } catch (error) {
         console.error(error)
@@ -61,10 +60,9 @@ export const deleteBoard = async (req: Request, res: Response) => {
 }
 
 export const addDrawing = async (req: Request, res: Response) => {
-    const data = req.body
-    const { boardId } = req.params
-
     try {
+        const data = req.body
+        const { boardId } = req.params
         const newDrawing = await prismaClient.drawing.create({
             data: {
                 type: data.type,
@@ -77,7 +75,6 @@ export const addDrawing = async (req: Request, res: Response) => {
                 board: { connect: { id: Number(boardId) } }
             }
         })
-
         res.status(201).json(newDrawing)
     } catch (error) {
         console.error(error)
@@ -86,14 +83,71 @@ export const addDrawing = async (req: Request, res: Response) => {
 }
 
 export const getDrawings = async (req: Request, res: Response) => {
-    const { boardId } = req.params
-
-    console.log(boardId)
     try {
+        const { boardId } = req.params
         const drawings = await prismaClient.drawing.findMany({
             where: { boardId: Number(boardId) }
         })
         res.send(drawings).status(200)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send(error)
+    }
+}
+
+export const undoDrawing = async (req: Request, res: Response) => {
+    try {
+        const { boardId, username } = req.params
+
+        const drawingToDelete = await prismaClient.drawing.findFirst({
+            where: {
+                boardId: Number(boardId),
+                user: {
+                    username
+                }
+            },
+            orderBy: {
+                id: "desc"
+            },
+            include: {
+                user: true
+            }
+        })
+
+        if (!drawingToDelete) {
+            return res.status(404).send("Drawing not found")
+        }
+
+        await prismaClient.drawing.delete({
+            where: {
+                id: drawingToDelete.id
+            }
+        })
+
+        res.status(200).send(drawingToDelete)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send(error)
+    }
+}
+
+export const redoDrawing = async (req: Request, res: Response) => {
+    try {
+        const { boardId, username } = req.params
+        const data = req.body
+        const newDrawing = await prismaClient.drawing.create({
+            data: {
+                type: data.type,
+                lineWidth: data.lineWidth,
+                strokeColor: data.strokeColor,
+                fillColor: data.fillColor,
+                posX: data.posX,
+                posY: data.posY,
+                user: { connect: { username: username } },
+                board: { connect: { id: Number(boardId) } }
+            }
+        })
+        res.status(201).json(newDrawing)
     } catch (error) {
         console.log(error)
         return res.status(500).send(error)

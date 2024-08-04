@@ -10,7 +10,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = env("POSTGRES_PRISMA_URL") 
+  directUrl = env("POSTGRES_URL_NON_POOLING") 
 }
 
 model Board {
@@ -21,7 +22,7 @@ model Board {
   drawings  Drawing[]
 }
 
-model User {
+model User2 {
   id       Int      @id @default(autoincrement())
   username String   @unique
 
@@ -40,5 +41,18 @@ model Drawing {
   posY              Int[]
   
   board             Board    @relation(fields: [boardId], references: [id], onDelete: Cascade) 
-  user              User     @relation(fields: [userId], references: [id])
+  user              User2     @relation(fields: [userId], references: [id])
+}
+
+
+// for 4th task
+model User {
+  id                Int      @id @default(autoincrement())
+  email             String   @unique
+  username          String
+  position          String?   
+  password          String
+  lastLogin         DateTime @default(now())
+  access            Boolean  @default(false)
+  refreshToken      String?
 }
