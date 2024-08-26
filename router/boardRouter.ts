@@ -12,6 +12,7 @@ import {
 
 const boardRouter = express.Router()
 
+
 boardRouter.get("/boards", getBoards)
 boardRouter.post("/board", addBoard)
 boardRouter.get("/board/:boardId", getBoard)
