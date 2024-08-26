@@ -7,13 +7,24 @@ import boardRouter from "./router/boardRouter"
 import userRouter from "./router/userRouter"
 
 const app = express()
+const server = http.createServer(app)
+
+const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+})
+
+app.use(express.json())
 
 const corsOptions = {
-    origin: ["https://itra-task-6-frontend.vercel.app", "http://localhost:5173"]
+    origin: [
+        "https://paint-online-taratuta.netlify.app",
+        "http://localhost:5173"
+    ]
 }
 
 app.use(cors(corsOptions))
-app.use(express.json())
 
 app.use("/api", boardRouter)
 app.use("/api", userRouter)
@@ -21,7 +32,7 @@ app.use("/api", userRouter)
 app.use(function (req, res, next) {
     res.header(
         "Access-Control-Allow-Origin",
-        "https://itra-task-6-frontend.vercel.app"
+        "https://paint-online-taratuta.netlify.app"
     )
     res.header("Access-Control-Allow-Headers", "X-Requested-With")
     res.header("Access-Control-Allow-Headers", "Content-Type")
@@ -31,13 +42,6 @@ app.use(function (req, res, next) {
     )
     res.header("Access-Control-Allow-Credentials", "true")
     next()
-})
-
-const server = http.createServer(app)
-const io = new Server(server, {
-    cors: {
-        origin: "*"
-    }
 })
 
 initSocketRoutes(io)

@@ -1,3 +1,7 @@
 node_modules
 .env
 .vercel
+dist
+prisma/generated
+# Local Netlify folder
+.netlify
